@@ -19,7 +19,7 @@ public class Prenotazione {
     @Setter(AccessLevel.NONE)
     private long id;
     @Column(name = "data_prenotazione")
-    private LocalDate dataPrenotazione;
+    private LocalDate data;
     @ManyToOne
     @JoinColumn(name = "utente_id")
     private Utente utente;
@@ -27,8 +27,8 @@ public class Prenotazione {
     @JoinColumn(name = "postazione_id")
     private PostazioneAziendale postazioneAziendale;
 
-    public Prenotazione(LocalDate dataPrenotazione, PostazioneAziendale postazioneAziendale, Utente utente) {
-        this.dataPrenotazione = dataPrenotazione;
+    public Prenotazione(LocalDate data, PostazioneAziendale postazioneAziendale, Utente utente) {
+        this.data = data;
         this.postazioneAziendale = postazioneAziendale;
         this.utente = utente;
     }

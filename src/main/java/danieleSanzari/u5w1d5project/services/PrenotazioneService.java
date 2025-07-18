@@ -25,9 +25,9 @@ public class PrenotazioneService {
 
     public Prenotazione creaPrenotazione(Long idUtente, Long idPostazione, LocalDate data) {
         Utente utente = utenteRepo.findById(idUtente).orElseThrow(() -> new NotFoundException(idUtente));
-        PostazioneAziendale postazione = postazioneRepo.findById(idPostazione).orElseThrow(() -> new NotFoundException(idPostazione));
+        PostazioneAziendale postazioneAziendale = postazioneRepo.findById(idPostazione).orElseThrow(() -> new NotFoundException(idPostazione));
 
-        boolean postazioneOccupata = prenotazioneRepo.existsByPostazioneAndData(postazione, data);
+        boolean postazioneOccupata = prenotazioneRepo.existsByPostazioneAziendaleAndData(postazioneAziendale, data);
         if (postazioneOccupata) {
             throw new ValidationException("La postazione è già stata assegnata per quella data!");
         }
@@ -37,9 +37,13 @@ public class PrenotazioneService {
         }
         Prenotazione prenotazione = new Prenotazione();
         prenotazione.setUtente(utente);
-        prenotazione.setPostazioneAziendale(postazione);
-        prenotazione.setDataPrenotazione(data);
+        prenotazione.setPostazioneAziendale(postazioneAziendale);
+        prenotazione.setData(data);
         return prenotazioneRepo.save(prenotazione);
+    }
+
+    public void savePrenotazione(Prenotazione prenotazione) {
+        prenotazioneRepo.save(prenotazione);
     }
 
     public List<Prenotazione> findPrenotazioniByUtente(Long idUtente) {

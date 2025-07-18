@@ -32,8 +32,14 @@ public class PostazioneAziendale {
     @OneToMany(mappedBy = "postazioneAziendale")
     private List<Prenotazione> prenotazioni;
 
-    public PostazioneAziendale(String descrizione, int numeroMaxPartecipanti) {
+    public PostazioneAziendale(String descrizione, Edificio edificio, int numeroMaxPartecipanti, TipoPostazione tipo, List<Prenotazione> prenotazioni) {
         this.descrizione = descrizione;
+        this.edificio = edificio;
         this.numeroMaxPartecipanti = numeroMaxPartecipanti;
+        this.tipo = tipo;
+        this.prenotazioni = prenotazioni;
+    }
+
+    public PostazioneAziendale(String nome, int maxOccupanti, TipoPostazione tipo, List<Prenotazione> prenotazioni) {
     }
 }

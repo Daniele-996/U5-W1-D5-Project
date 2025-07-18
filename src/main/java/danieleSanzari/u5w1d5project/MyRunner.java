@@ -1,0 +1,98 @@
+package danieleSanzari.u5w1d5project;
+
+import com.github.javafaker.Faker;
+import danieleSanzari.u5w1d5project.entities.Edificio;
+import danieleSanzari.u5w1d5project.entities.PostazioneAziendale;
+import danieleSanzari.u5w1d5project.entities.Prenotazione;
+import danieleSanzari.u5w1d5project.entities.Utente;
+import danieleSanzari.u5w1d5project.enums.TipoPostazione;
+import danieleSanzari.u5w1d5project.exceptions.ValidationException;
+import danieleSanzari.u5w1d5project.services.EdificioService;
+import danieleSanzari.u5w1d5project.services.PostazioneService;
+import danieleSanzari.u5w1d5project.services.PrenotazioneService;
+import danieleSanzari.u5w1d5project.services.UtenteService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+@Component
+public class MyRunner implements CommandLineRunner {
+    @Autowired
+    private EdificioService edificioService;
+    @Autowired
+    private PostazioneService postazioneService;
+    @Autowired
+    private PrenotazioneService prenotazioneService;
+    @Autowired
+    private UtenteService utenteService;
+
+    @Override
+    public void run(String... args) throws Exception {
+        Faker faker = new Faker(Locale.ITALY);
+
+        List<Edificio> edifici = new ArrayList<>();
+        for (int i = 0; i < 15; i++) {
+            Edificio newEdificio = new Edificio(
+                    faker.address().cityName(),
+                    faker.address().fullAddress(),
+                    faker.commerce().department()
+            );
+            edificioService.saveEdificio(newEdificio);
+            edifici.add(newEdificio);
+        }
+
+        List<Utente> utenti = new ArrayList<>();
+        for (int i = 0; i < 30; i++) {
+            String firstName = faker.name().firstName().toLowerCase();
+            String lastName = faker.name().lastName().toLowerCase();
+            String email = firstName + "." + lastName + "@gmail.com";
+            String nomeCompleto = faker.name().firstName() + " " + faker.name().lastName();
+            String username = faker.funnyName().name();
+
+            Utente newUtente = new Utente(email, nomeCompleto, username);
+            utenteService.saveUtente(newUtente);
+            utenti.add(newUtente);
+        }
+
+        List<PostazioneAziendale> postazioni = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            String nome = faker.letterify("???????????????");
+            int maxOccupanti = faker.number().numberBetween(2, 20);
+            TipoPostazione tipo = TipoPostazione.OPEN_SPACE;
+            List<Prenotazione> prenotazioni = new ArrayList<>();
+
+            PostazioneAziendale newPostazione = new PostazioneAziendale(nome, maxOccupanti, tipo, prenotazioni);
+            postazioneService.savePostazione(newPostazione);
+            postazioni.add(newPostazione);
+        }
+
+        for (PostazioneAziendale postazione : postazioni) {
+            int numeroPrenotazioni = faker.number().numberBetween(0, 10);
+            List<Prenotazione> prenotazioniPostazione = new ArrayList<>();
+
+            for (int i = 0; i < numeroPrenotazioni; i++) {
+                Utente utenteRandom = utenti.get(faker.number().numberBetween(0, utenti.size()));
+                LocalDate dataPrenotazione = LocalDate.now();
+
+                try {
+                    Prenotazione prenotazione = prenotazioneService.creaPrenotazione(
+                            utenteRandom.getId(),
+                            postazione.getId(),
+                            dataPrenotazione
+                    );
+                    prenotazioniPostazione.add(prenotazione);
+                } catch (ValidationException e) {
+                    System.out.println("Prenotazione NON valida: " + e.getMessage());
+                }
+            }
+
+            postazione.setPrenotazioni(prenotazioniPostazione);
+            postazioneService.savePostazione(postazione);
+        }
+    }
+}

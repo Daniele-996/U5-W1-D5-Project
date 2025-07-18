@@ -13,8 +13,8 @@ public class EdificioService {
     @Autowired
     private EdificioRepo edificioRepo;
 
-    public Edificio saveEdificio(Edificio edificio) {
-        return edificioRepo.save(edificio);
+    public void saveEdificio(Edificio edificio) {
+        edificioRepo.save(edificio);
     }
 
     public Edificio findById(Long id) {

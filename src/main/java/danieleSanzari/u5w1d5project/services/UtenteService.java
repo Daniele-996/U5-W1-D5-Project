@@ -18,6 +18,8 @@ public class UtenteService {
         if (utenteRepo.existsByUsername(utente.getUsername())) {
             throw new ValidationException("L'username :" + utente.getUsername() + " è già in uso!!");
         }
+        if (utenteRepo.existsByEmail(utente.getEmail()))
+            throw new ValidationException("Email " + utente.getEmail() + " già in uso");
         return utenteRepo.save(utente);
     }
 
