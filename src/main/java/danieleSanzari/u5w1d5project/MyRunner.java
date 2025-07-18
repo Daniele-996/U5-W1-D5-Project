@@ -16,7 +16,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -77,8 +79,15 @@ public class MyRunner implements CommandLineRunner {
 
             for (int i = 0; i < numeroPrenotazioni; i++) {
                 Utente utenteRandom = utenti.get(faker.number().numberBetween(0, utenti.size()));
-                LocalDate dataPrenotazione = LocalDate.now();
 
+                LocalDate inizio = LocalDate.now().minusYears(1);
+                LocalDate fine = LocalDate.now().plusYears(1);
+                Date startDate = Date.from(inizio.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                Date endDate = Date.from(fine.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                Date dataPrenotazioneDate = faker.date().between(startDate, endDate);
+                LocalDate dataPrenotazione = dataPrenotazioneDate.toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate();
                 try {
                     Prenotazione prenotazione = prenotazioneService.creaPrenotazione(
                             utenteRandom.getId(),
