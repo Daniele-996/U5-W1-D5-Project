@@ -3,10 +3,7 @@ package danieleSanzari.u5w1d5project;
 import com.github.javafaker.Faker;
 import danieleSanzari.u5w1d5project.entities.Edificio;
 import danieleSanzari.u5w1d5project.entities.PostazioneAziendale;
-import danieleSanzari.u5w1d5project.entities.Prenotazione;
-import danieleSanzari.u5w1d5project.entities.Utente;
 import danieleSanzari.u5w1d5project.enums.TipoPostazione;
-import danieleSanzari.u5w1d5project.exceptions.ValidationException;
 import danieleSanzari.u5w1d5project.services.EdificioService;
 import danieleSanzari.u5w1d5project.services.PostazioneService;
 import danieleSanzari.u5w1d5project.services.PrenotazioneService;
@@ -15,9 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
 
 @Component
 public class MyRunner implements CommandLineRunner {
@@ -45,7 +41,7 @@ public class MyRunner implements CommandLineRunner {
             edifici.add(newEdificio);
         }
 /*
-       */
+
         List<Utente> utenti = new ArrayList<>();
         for (int i = 0; i < 30; i++) {
             String firstName = faker.name().firstName().toLowerCase();
@@ -59,7 +55,6 @@ public class MyRunner implements CommandLineRunner {
             utenteService.saveUtente(newUtente);
             utenti.add(newUtente);
         }
-        List<Edificio> edifici = edificioService.findAll();
         List<PostazioneAziendale> postazioni = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             String nome = faker.letterify("???????????????");
@@ -106,6 +101,11 @@ public class MyRunner implements CommandLineRunner {
                 postazione.setPrenotazioni(prenotazioniPostazione);
                 postazioneService.savePostazione(postazione);
             }
-        }
+        }*/
+
+        List<Edificio> edifici = edificioService.findAll();
+        List<PostazioneAziendale> listaPostazioni = postazioneService.ricercaPerTipoEPerCitta(TipoPostazione.OPEN_SPACE, "Quarto Giacinto a mare");
+        System.out.println("Postazioni trovate per tipo e città: " + listaPostazioni.size());
+        listaPostazioni.forEach(postazioneAziendale -> System.out.println("- La postazione con id : " + postazioneAziendale.getId() + " ed il nome dell'edificio è : " + postazioneAziendale.getEdificio().getNome()));
     }
 }
