@@ -26,4 +26,10 @@ public class Prenotazione {
     @ManyToOne
     @JoinColumn(name = "postazione_id")
     private PostazioneAziendale postazioneAziendale;
+
+    public Prenotazione(LocalDate dataPrenotazione, PostazioneAziendale postazioneAziendale, Utente utente) {
+        this.dataPrenotazione = dataPrenotazione;
+        this.postazioneAziendale = postazioneAziendale;
+        this.utente = utente;
+    }
 }
