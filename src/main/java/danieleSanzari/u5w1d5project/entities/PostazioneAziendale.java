@@ -1,6 +1,6 @@
 package danieleSanzari.u5w1d5project.entities;
 
-import danieleSanzari.u5w1d5project.enums.TIpoPostazione;
+import danieleSanzari.u5w1d5project.enums.TipoPostazione;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -23,7 +23,7 @@ public class PostazioneAziendale {
     private UUID codice;
     private String descrizione;
     @Enumerated(EnumType.STRING)
-    private TIpoPostazione tipo;
+    private TipoPostazione tipo;
     @Column(name = "numero_max_partecipanti")
     private int numeroMaxPartecipanti;
     @ManyToOne
