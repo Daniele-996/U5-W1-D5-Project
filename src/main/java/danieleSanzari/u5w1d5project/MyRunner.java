@@ -17,10 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Component
 public class MyRunner implements CommandLineRunner {
@@ -37,7 +34,7 @@ public class MyRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         Faker faker = new Faker(Locale.ITALY);
 
-        List<Edificio> edifici = new ArrayList<>();
+     /*   List<Edificio> edifici = new ArrayList<>();
         for (int i = 0; i < 15; i++) {
             Edificio newEdificio = new Edificio(
                     faker.address().cityName(),
@@ -47,31 +44,37 @@ public class MyRunner implements CommandLineRunner {
             edificioService.saveEdificio(newEdificio);
             edifici.add(newEdificio);
         }
-
+/*
+       */
         List<Utente> utenti = new ArrayList<>();
         for (int i = 0; i < 30; i++) {
             String firstName = faker.name().firstName().toLowerCase();
             String lastName = faker.name().lastName().toLowerCase();
             String email = firstName + "." + lastName + "@gmail.com";
             String nomeCompleto = faker.name().firstName() + " " + faker.name().lastName();
-            String username = faker.funnyName().name();
+            String username = firstName + "." + lastName + faker.number().digits(5);
+
 
             Utente newUtente = new Utente(email, nomeCompleto, username);
             utenteService.saveUtente(newUtente);
             utenti.add(newUtente);
         }
-
+        List<Edificio> edifici = edificioService.findAll();
         List<PostazioneAziendale> postazioni = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             String nome = faker.letterify("???????????????");
             int maxOccupanti = faker.number().numberBetween(2, 20);
             TipoPostazione tipo = TipoPostazione.OPEN_SPACE;
             List<Prenotazione> prenotazioni = new ArrayList<>();
+            Edificio edificio = edifici.get(faker.number().numberBetween(0, edifici.size()));
 
-            PostazioneAziendale newPostazione = new PostazioneAziendale(nome, maxOccupanti, tipo, prenotazioni);
+            PostazioneAziendale newPostazione = new PostazioneAziendale(
+                    UUID.randomUUID(), nome, edificio, maxOccupanti, prenotazioni, tipo);
+
             postazioneService.savePostazione(newPostazione);
             postazioni.add(newPostazione);
         }
+
 
         for (PostazioneAziendale postazione : postazioni) {
             int numeroPrenotazioni = faker.number().numberBetween(0, 10);
@@ -98,10 +101,11 @@ public class MyRunner implements CommandLineRunner {
                 } catch (ValidationException e) {
                     System.out.println("Prenotazione NON valida: " + e.getMessage());
                 }
-            }
 
-            postazione.setPrenotazioni(prenotazioniPostazione);
-            postazioneService.savePostazione(postazione);
+
+                postazione.setPrenotazioni(prenotazioniPostazione);
+                postazioneService.savePostazione(postazione);
+            }
         }
     }
 }
